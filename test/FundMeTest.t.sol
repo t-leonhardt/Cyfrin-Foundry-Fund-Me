@@ -12,4 +12,17 @@ contract FundMeTets is Test{
     function testMinimumDollarIsFive() public{
         assertEq(fundMe.MINIMUM_USD(), 5e18);
     }
+
+    function testOwnerIsMessageSender() public{
+        // test fails because fundMe is not initialzed by the user but 
+        // by FundMeTest while msg.sender is user 
+
+        console.log(fundMe.i_owner()); // FundMeTest
+        console.log(msg.sender); // user address 
+        assertEq(fundMe.i_owner(), msg.sender);
+
+
+        assertEq(fundMe.i_owner(), address(this));
+        
+    }
 }
