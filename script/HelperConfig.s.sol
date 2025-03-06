@@ -48,6 +48,13 @@ contract HelperConfig is Script{
         // since local networks/nodes do not have priceFeeds/contracts
         // they need to be developed for local use/testing
         
+        if (activeNetworkConfig.priceFeed != address(0)){
+            // address(0) is the default value/address 
+            return activeNetworkConfig;
+        }
+        // if no anvil netowrk has been deployed, deploy one; 
+        // otherwise (if one has already been created), use that one
+
         vm.startBroadcast();
         MockV3Aggregator mockPriceFeed = new MockV3Aggregator(DECIMALS, INITIAL_PRICE);
         // first number describes the decimals and ETH/USD has 8 decimals 
