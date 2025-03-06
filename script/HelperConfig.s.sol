@@ -5,8 +5,9 @@
 pragma solidity ^0.8.18;
 
 import {Script} from "forge-std/Script.sol";
+import {MockV3Aggregator} from "../test/mocks/MockV3Aggregator.sol";
 
-contract HelperConfig{
+contract HelperConfig is Script{
     
     struct NetwrokCOnfig{
         address priceFeed;
@@ -41,7 +42,19 @@ contract HelperConfig{
         return ethMainnetConfig;
     }
 
-    function getAnvilEthConfig() public pure returns(NetwrokCOnfig memory){
+    function getAnvilEthConfig() public returns(NetwrokCOnfig memory){
+        // since local networks/nodes do not have priceFeeds/contracts
+        // they need to be developed for local use/testing
+        
+        vm.startBroadcast();
+        MockV3Aggregator mockPriceFeed = new MockV3Aggregator(8, 2000e8);
+        // first number describes the decimals and ETH/USD has 8 decimals 
+        // 2000 is the initial price chosen for local network 
+        // e8 is necessary since it is 8 decimals 
+        vm.stopBroadcast();
 
+        NetwrokCOnfig memory anvilConfig = NetwrokCOnfig({priceFeed: address(mockPriceFeed)});
+
+        return anvilConfig;
     }
 }
