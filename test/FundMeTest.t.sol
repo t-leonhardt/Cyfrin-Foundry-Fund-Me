@@ -32,8 +32,13 @@ contract FundMeTets is Test{
         
     }
 
-    function testPriceFeedVersion() public{
-        uint256 version = fundMe.getVersion();
-        assertEq(version, 4);
-    }
+    function testPriceFeedVersion() public {
+        if (block.chainid == 11155111) {
+            uint256 version = fundMe.getVersion();
+            assertEq(version, 4);
+        } else if (block.chainid == 1) {
+            uint256 version = fundMe.getVersion();
+            assertEq(version, 6);
+        }
+    }       
 }
