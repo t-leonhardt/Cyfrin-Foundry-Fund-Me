@@ -9,6 +9,8 @@ import {MockV3Aggregator} from "../test/mocks/MockV3Aggregator.sol";
 
 contract HelperConfig is Script{
     
+    uint8 public constant DECIMALS = 8;
+    int256 public constant INITIAL_PRICE = 2000e8;
     struct NetwrokCOnfig{
         address priceFeed;
     }
@@ -47,7 +49,7 @@ contract HelperConfig is Script{
         // they need to be developed for local use/testing
         
         vm.startBroadcast();
-        MockV3Aggregator mockPriceFeed = new MockV3Aggregator(8, 2000e8);
+        MockV3Aggregator mockPriceFeed = new MockV3Aggregator(DECIMALS, INITIAL_PRICE);
         // first number describes the decimals and ETH/USD has 8 decimals 
         // 2000 is the initial price chosen for local network 
         // e8 is necessary since it is 8 decimals 
