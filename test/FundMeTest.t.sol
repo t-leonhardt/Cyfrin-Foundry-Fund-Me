@@ -34,14 +34,14 @@ contract FundMeTets is Test{
         // test fails because fundMe is not initialzed by the user but 
         // by FundMeTest while msg.sender is user 
 
-        console.log(fundMe.i_owner()); // FundMeTest
-        console.log(msg.sender); // user address 
+        // console.log(fundMe.i_owner()); // FundMeTest
+        // console.log(msg.sender); // user address 
         //assertEq(fundMe.i_owner(), msg.sender);
 
 
         // assertEq(fundMe.i_owner(), address(this));
 
-        assertEq(fundMe.i_owner(), msg.sender);
+        assertEq(fundMe.getI_Owner(), msg.sender);
         // due to factorizing, user us caller again 
         
     }
@@ -91,5 +91,22 @@ contract FundMeTets is Test{
         vm.prank(USER);
         fundMe.fund{value: SEND_VALUE}();
         _;
+    }
+
+    function testWithDrawWithASingleFunder() public funded{
+        // Arrange (arrange/setup the test)
+        uint256 startingOwnerBalance = fundMe.getI_Owner().balance;
+        uint256 startingFundMeBalance = address(fundMe).balance;
+
+        // Act (do the action that is supposed to be tested)
+        vm.prank(fundMe.getI_Owner());
+        fundMe.withdraw();
+
+        // Assert (assert the test)
+        uint256 endingOwnerBalance = fundMe.getI_Owner().balance;
+        uint256 endingFundMeBalance = address(fundMe).balance;
+
+        assertEq(endingFundMeBalance, 0);
+        assertEq(startingFundMeBalance + startingOwnerBalance, endingOwnerBalance);
     }
 }
