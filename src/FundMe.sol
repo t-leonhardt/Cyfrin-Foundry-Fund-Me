@@ -67,4 +67,24 @@ contract FundMe {
     function getI_Owner() external view returns(address){
         return i_owner;
     }
+
+    function cheaperWithDraw() public onlyOwner{
+        uint256 fundersLength = funders.length; 
+        // reading from storage is very gas expensive; by using variable
+        // the function reads from memory instead
+        // reading from memory is much cheaper
+
+        // usefull for the for-loop since we would read from storage every
+        // iteration to check if condidtion still holds or not 
+
+        for (uint256 funderIndex = 0; funderIndex < fundersLength; funderIndex++) {
+            address funder = funders[funderIndex];
+            addressToAmountFunded[funder] = 0;
+        }
+        funders = new address[](0);
+
+        // call
+        (bool callSuccess,) = payable(msg.sender).call{value: address(this).balance}("");
+        require(callSuccess, "Call failed");
+    }
 }
