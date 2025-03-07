@@ -109,4 +109,39 @@ contract FundMeTets is Test{
         assertEq(endingFundMeBalance, 0);
         assertEq(startingFundMeBalance + startingOwnerBalance, endingOwnerBalance);
     }
+
+    function testWithDrawWithMultipleFunders() public funded{
+        // ARRANGE 
+
+        uint160 numberOfFunders = 10;
+        // uint160 necessary to cast to an address 
+        // since it has the same number of bytes
+
+        uint160 startingFunderIndex = 2;
+
+        for(uint160 i = startingFunderIndex; i < numberOfFunders; i++){
+            // hoax does the same as vm.prank and vm.deal combined
+            hoax(address(i), SEND_VALUE);  
+            fundMe.fund{value: SEND_VALUE}();  
+        }
+
+        uint256 startingOwnerBalance = fundMe.getI_Owner().balance;
+        uint256 startingFundMeBalance = address(fundMe).balance;
+
+
+        // ACT
+        
+        vm.startPrank(fundMe.getI_Owner());
+        fundMe.withdraw();
+        vm.stopPrank();
+        // same as vm.prank() with the difference that it is not only
+        // the next line but all lines in between the startng and 
+        // closing statement
+        // similar to startBroadcast and stopBroadcast 
+
+
+        // ASSERT
+        assert(address(fundMe).balance == 0);
+        assert(startingFundMeBalance + startingOwnerBalance == fundMe.getI_Owner().balance);
+    }
 }
