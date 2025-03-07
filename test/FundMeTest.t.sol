@@ -70,32 +70,26 @@ contract FundMeTets is Test{
         // 5 USD
     }
 
-    function testFundUpdatesFundedDataStructure() public{
-        vm.prank(USER); 
-        // tells the test that the next call/transaction will be sent by user 
-
-        fundMe.fund{value: SEND_VALUE}();
-
-
+    function testFundUpdatesFundedDataStructure() public funded{
         uint256 amoountFunded = fundMe.getAddressToAmountFunded(USER);
         assertEq(amoountFunded, SEND_VALUE);
     }
 
-    function testAddsFunderToArrayofFunders() public{
-        vm.prank(USER);
-        fundMe.fund{value: SEND_VALUE}();
-
+    function testAddsFunderToArrayofFunders() public funded{
         address funder = fundMe.getFunder(0);
 
         assertEq(funder, USER);
     }
 
-    function testOnlyOwnerCanWithdraw() public{
-        vm.prank(USER);
-        fundMe.fund{value: SEND_VALUE}();
-
+    function testOnlyOwnerCanWithdraw() public funded{
         vm.expectRevert();
         vm.prank(USER);
         fundMe.withdraw();
+    }
+
+    modifier funded(){
+        vm.prank(USER);
+        fundMe.fund{value: SEND_VALUE}();
+        _;
     }
 }
