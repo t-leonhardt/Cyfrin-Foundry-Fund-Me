@@ -91,6 +91,11 @@ contract FundMeTets is Test{
     }
 
     function testOnlyOwnerCanWithdraw() public{
-        
+        vm.prank(USER);
+        fundMe.fund{value: SEND_VALUE}();
+
+        vm.expectRevert();
+        vm.prank(USER);
+        fundMe.withdraw();
     }
 }
