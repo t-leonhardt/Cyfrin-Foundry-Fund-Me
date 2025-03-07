@@ -11,8 +11,8 @@ contract FundMeTets is Test{
     // possible to create "fake" user to make testing easier 
 
     uint256 constant SEND_VALUE = 0.1 ether;
-
     uint256 constant STARTING_BALANCE = 10 ether;
+    uint256 constant GAS_PRICE = 1;
 
     function setUp() external {
         // fundMe = new FundMe(0x694AA1769357215DE4FAC081bf1f309aDC325306);
@@ -99,8 +99,16 @@ contract FundMeTets is Test{
         uint256 startingFundMeBalance = address(fundMe).balance;
 
         // Act (do the action that is supposed to be tested)
+        uint256 gasStart = gasleft();
+        // build in function that tells how much gas is left in the transaction call
+        vm.txGasPrice(GAS_PRICE);
+        // simulate gas price on networks 
         vm.prank(fundMe.getI_Owner());
         fundMe.withdraw();
+        uint256 gasEnd = gasleft();
+        uint256 gasUsed = (gasStart - gasEnd) * tx.gasprice;
+        //tx.gasprice is a build in function that tells the current price of gas 
+        console.log(gasUsed);
 
         // Assert (assert the test)
         uint256 endingOwnerBalance = fundMe.getI_Owner().balance;
